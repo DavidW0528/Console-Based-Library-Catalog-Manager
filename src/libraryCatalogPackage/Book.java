@@ -2,31 +2,77 @@ package libraryCatalogPackage;
 
 import java.util.ArrayList;
 
+// Represents what a book is to this program
+/* This class encapsulates all parameters and behaviors 
+ * related to a book, allowing the catalog logic to remain
+ * independent from data storage
+*/
+
 public class Book {
 	private String title;
 	private ArrayList<String> authors;
 	private String publisher;
-	String isbn;
-	int publicationYear;
-	String edition;
-	String callNumber;
-	String format; 
-	boolean isAvailable;
+	private String isbn;
+	private int publicationYear;
+	private String edition;
+	private String callNumber;
+	private String format; 
+	private boolean isAvailable;
+	
+	public Book() {
+		this.title = "Unknown Title";
+		this.authors = new ArrayList<>();
+		this.publisher = "Unknown Publisher";
+		this.isbn = "N/A";
+		this.publicationYear = -1;
+		this.edition = "N/A";
+		this.callNumber = "N/A";
+		this.format = "N/A";
+		this.isAvailable = true;
+	}//Ends null Book constructor
 	
 	public Book(String title, ArrayList<String> authors, String publisher, String isbn, int publicationYear,
 			String edition, String callNumber, String format, boolean isAvailable) {
-		super();
-		this.title = title;
-		this.authors = authors;
-		this.publisher = publisher;
-		this.isbn = isbn;
-		this.publicationYear = publicationYear;
-		this.edition = edition;
-		this.callNumber = callNumber;
-		this.format = format;
-		this.isAvailable = isAvailable;
+		this();
+
+		if (title != null && !title.isBlank()) {
+			this.title = title;
+		}//Ends if statement
+
+	    if (authors != null) {
+	        this.authors = new ArrayList<>(authors);
+	    }//Ends if statement
+	
+	    if (publisher != null && !publisher.isBlank()) {
+	        this.publisher = publisher;
+	    }//Ends if statement
+	
+	    if (isbn != null && !isbn.isBlank()) {
+	        this.isbn = isbn;
+	    }//Ends if statement
+	
+	    if (publicationYear >= 1450) {
+	        this.publicationYear = publicationYear;
+	    }//Ends if statement
+	
+	    if (edition != null && !edition.isBlank()) {
+	        this.edition = edition;
+	    }//Ends if statement
+	    
+
+	    if (callNumber != null && !callNumber.isBlank()) {
+        this.callNumber = callNumber;
+	    }//Ends if statement
+
+	    if (format != null && !format.isBlank()) {
+	    	this.format = format;
+	    }//Ends if statement
+	    
+	    this.isAvailable = isAvailable;
+
 	}//Ends Book constructor
 
+	
 	public String getTitle() {
 		return title;
 	}//Ends title getter
@@ -122,3 +168,4 @@ public class Book {
 	}//Ends Book toString
 	
 }//Ends Book class
+

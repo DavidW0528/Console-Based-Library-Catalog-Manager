@@ -1,6 +1,9 @@
 package libraryCatalogPackage;
 
-import java.util.Scanner;
+import java.util.*;
+import java.time.*;
+
+//This is a class of reusable helper methods for console-based programs
 
 public class Helpers {
 
@@ -30,4 +33,10 @@ public class Helpers {
 		System.out.print("Press ENTER to continue...");
 		scanner.nextLine();
 	}//Ends pause() method
+	
+	
+	public static Date getCurrentDate() {
+		LocalDate now = LocalDate.now();
+		return new Date(now.getMonthValue(), now.getDayOfMonth(), now.getYear());
+	}//Ends currentDate getter
 }//Ends Helpers class
