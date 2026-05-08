@@ -12,15 +12,14 @@ public class Book {
 	private String title;
 	private ArrayList<String> authors;
 	private String publisher;
-	String isbn;
-	int publicationYear;
-	String edition;
-	String callNumber;
-	String format; 
-	boolean isAvailable;
+	private String isbn;
+	private int publicationYear;
+	private String edition;
+	private String callNumber;
+	private String format; 
+	private boolean isAvailable;
 	
 	public Book() {
-		super();
 		this.title = "Unknown Title";
 		this.authors = new ArrayList<>();
 		this.publisher = "Unknown Publisher";
@@ -37,11 +36,11 @@ public class Book {
 		this();
 
 		if (title != null && !title.isBlank()) {
-        this.title = title;
+			this.title = title;
 		}//Ends if statement
 
 	    if (authors != null) {
-	        this.authors = authors;
+	        this.authors = new ArrayList<>(authors);
 	    }//Ends if statement
 	
 	    if (publisher != null && !publisher.isBlank()) {
@@ -169,3 +168,4 @@ public class Book {
 	}//Ends Book toString
 	
 }//Ends Book class
+

@@ -9,34 +9,58 @@ public class Menu {
 	
 	public static void runMenu() {
 		Scanner input = new Scanner(System.in);
-		ArrayList<Book> bookCatalog = new ArrayList<>();;
-	    int menuChoice;
+        ArrayList<Book> bookCatalog = new ArrayList<>();
+        ArrayList<Student> students = new ArrayList<>();
+
+        int choice;
+
+        do {
+            Helpers.billboard("Library System");
+            System.out.println("1. Library Catalog");
+            System.out.println("2. Loan Management");
+            System.out.println("3. Exit");
+            System.out.print("Choice: ");
+
+            choice = input.nextInt();
+            input.nextLine();
+
+            switch (choice) {
+                case 1 -> libraryCatalogMenu(input, bookCatalog);
+                case 2 -> loanMenu(input, bookCatalog, students);
+            }//Ends switch-case
+        } while (choice != 3);
+
+		
+	}//Ends runMenu method
 	
+	public static void libraryCatalogMenu(Scanner input, ArrayList<Book> bookCatalog) {
+		int menuChoice;
+		
 	    do {
 	        Helpers.billboard("Library Catalog");
 	        System.out.println("1. Add Book");
-	        System.out.println("2. Search");
+	        System.out.println("2. Multi-Field Search");
 	        System.out.println("3. Display All Book Information");
 	        System.out.println("4. Wipe a Book From the Catalog");
-	        System.out.println("5. Exit");
+	        System.out.println("5. ISBN Search");
+	        System.out.println("6. Back");
 	        System.out.print("Enter choice: ");
 	        menuChoice = input.nextInt();
 	        input.nextLine();
 	
 	        switch (menuChoice) {
 	            case 1:
-	            	Helpers.clearConsole();
 	            	addBook(input, bookCatalog);
 	            	Helpers.pause(input);
 	            	Helpers.clearConsole();
 	            	break;
 	            case 2: 
-	            	Helpers.clearConsole();
 	            	searchBooks(bookCatalog, input);
 	            	Helpers.pause(input);
 	            	Helpers.clearConsole();
 	            	break;
-	            case 3: displayBooks(bookCatalog, input);
+	            case 3: 
+	            	displayBooks(bookCatalog, input);
 	            	Helpers.pause(input);
 	            	Helpers.clearConsole();
 	            	break;
@@ -46,17 +70,155 @@ public class Menu {
 	            	Helpers.pause(input);
 	            	Helpers.clearConsole();
 	            	break;
-	            case 5: 
-	            	System.out.println("Goodbye!");
+	            case 5:
+	            	if (bookCatalog.isEmpty()) {
+	    	            System.out.println("There are no books in the catalog.");
+	    	            Helpers.pause(input);
+	    	            break;
+	    	        }//Ends if
+	    	
+	    	        System.out.print("Enter the ISBN of the book to display: ");
+	    	        String searchIsbn = input.nextLine().trim();
+	    	
+	    	        boolean found = false;
+	    	
+	    	        for (Book book : bookCatalog) {
+	    	            if (book.getIsbn().equals(searchIsbn)) {
+	    	                System.out.println();
+	    	                System.out.println(book);
+	    	                found = true;
+	    	                Helpers.pause(input);
+	    	            }//Ends if
+	    	            
+	    	            if (!found) {
+		    	            System.out.println("No book found with that ISBN.");
+		    	            break;
+		    	        }//Ends if
+	    	        }//Ends for loop
+	    	        Helpers.pause(input);
+	    	        break;
+	    	        
+	            case 6:
 	            	break;
+	    	        
 	            default: 
 	            	Helpers.clearConsole();
 	            	System.out.println("Invalid choice.");
 	            	Helpers.pause(input);
 	            	Helpers.clearConsole();
 	        }//Ends switch-case
-	    } while (menuChoice != 5);
-	}//Ends runMenu method
+	    } while (menuChoice != 6);
+	}//Ends libraryCatalogMenu method
+	
+
+	private static void loanMenu(Scanner input, ArrayList<Book> catalog, ArrayList<Student> students) {
+        int choice;
+        do {
+            Helpers.clearConsole();
+            Helpers.billboard("Loan Management");
+            System.out.println("1. Add Student");
+            System.out.println("2. Checkout Book");
+            System.out.println("3. Return Book");
+            System.out.println("4. Renew Book");
+            System.out.println("5. Check Due Date");
+            System.out.println("6. Back");
+            System.out.print("Choice: ");
+
+            choice = input.nextInt();
+            input.nextLine();
+
+            switch (choice) {
+                case 1 -> addStudent(input, students);
+                case 2 -> checkoutBook(input, students, catalog);
+                case 3 -> returnBook(input, students);
+                case 4 -> renewBook(input, students);
+                case 5 -> checkDueDate(input, students);
+            }//Ends switch-case
+        } while (choice != 6);
+    }//Ends loanMenu method
+
+	
+	private static Student findStudent(Scanner input, ArrayList<Student> students) {
+        System.out.print("Enter Student ID: ");
+        int id = input.nextInt();
+        input.nextLine();
+
+        for (Student s : students) {
+            if (s.getStudentID() == id) return s;
+        }//Ends for loop
+        System.out.println("Student not found.");
+        Helpers.pause(input);
+        return null;
+    }//Ends findStudent method
+
+
+	private static void addStudent(Scanner input, ArrayList<Student> students) {
+        System.out.print("First Name: ");
+        String f = input.nextLine();
+        System.out.print("Last Name: ");
+        String l = input.nextLine();
+        System.out.print("Student ID: ");
+        int id = input.nextInt();
+        input.nextLine();
+        students.add(new Student(new Name(f, l), id));
+    }//Ends addStudent method
+
+    private static void checkoutBook(Scanner input, ArrayList<Student> students, ArrayList<Book> catalog) {
+        Student student = findStudent(input, students);
+        if (student == null) return;
+
+        System.out.print("Enter ISBN: ");
+        String isbn = input.nextLine();
+
+        for (Book book : catalog) {
+            if (book.getIsbn().equals(isbn) && book.isAvailable()) {
+                student.checkOutBook(book);
+                System.out.println("Book checked out.");
+                Helpers.pause(input);
+                return;
+            }//Ends if statement
+        }//Ends for loop
+        System.out.println("Book unavailable.");
+        Helpers.pause(input);
+    }//Ends checkoutBook method
+
+    private static void returnBook(Scanner input, ArrayList<Student> students) {
+        Student student = findStudent(input, students);
+        if (student == null) return;
+
+        System.out.print("Enter ISBN: ");
+        String isbn = input.nextLine();
+
+        System.out.println(student.returnBook(isbn) ? "Book returned." : "Book not found.");
+
+        Helpers.pause(input);
+    }//Ends returnBook method
+
+    private static void renewBook(Scanner input, ArrayList<Student> students) {
+        Student student = findStudent(input, students);
+        if (student == null) return;
+
+        System.out.print("Enter ISBN: ");
+        String isbn = input.nextLine();
+
+        System.out.println(student.renewBook(isbn) ? "Book renewed." : "Renewal failed.");
+
+        Helpers.pause(input);
+    }//Ends renewBook method
+    
+
+    private static void checkDueDate(Scanner input, ArrayList<Student> students) {
+        Student student = findStudent(input, students);
+        if (student == null) return;
+
+        System.out.print("Enter ISBN: ");
+        String isbn = input.nextLine();
+
+        Date due = student.getDueDate(isbn);
+        System.out.println(due != null ? "Due: " + due : "Book not found.");
+
+        Helpers.pause(input);
+    }//Ends checkDueDate method
 	
 	
 	public static void addBook(Scanner input, ArrayList<Book> bookCatalog) {
@@ -119,9 +281,9 @@ public class Menu {
 		}//Ends while loop
 		
 		if(availabilitySelection.equals("yes")) {
-			isAvailable = false;
-		} else {
 			isAvailable = true;
+		} else {
+			isAvailable = false;
 		}//Ends if-else
 		bookCatalog.add(new Book(title, authors, publisher, isbn, publicationYear, edition, callNumber, format, isAvailable));
 	}//Ends addFish method
@@ -130,61 +292,18 @@ public class Menu {
 	public static void displayBooks(ArrayList<Book> bookCatalog, Scanner input) {
 		Helpers.clearConsole();
 		Helpers.billboard("Book Data Display");
-		
-		int displayChoice;
-		
-		System.out.println("1. Display All Books\n2. Display a Single Book ");
-		System.out.print("Enter choice: ");
-		
-        displayChoice = input.nextInt();
-        input.nextLine();
-        Helpers.clearConsole();
-        
-        switch (displayChoice) {
-        case 1: 
-        	if(bookCatalog.isEmpty()) {
-    			System.out.println("There are no books in the catalog");
-    			break;
-    		}//Ends if
-    		
-    		for(Book book : bookCatalog) {
-    			System.out.println(book.toString());
-    			System.out.println();
-    		}//Ends for loop
-    		break;
-        case 2:
 
-			if (bookCatalog.isEmpty()) {
-	            System.out.println("There are no books in the catalog.");
-	            Helpers.pause(input);
-	            break;
-	        }//Ends if
-	
-	        System.out.print("Enter the ISBN of the book to display: ");
-	        String searchIsbn = input.nextLine().trim();
-	
-	        boolean found = false;
-	
-	        for (Book book : bookCatalog) {
-	            if (book.getIsbn().equals(searchIsbn)) {
-	                System.out.println();
-	                System.out.println(book);
-	                found = true;
-	                Helpers.pause(input);
-	                break;
-	            }//Ends if
-	        }//Ends for loop
-	
-	        if (!found) {
-	            System.out.println("No book found with that ISBN.");
-	        }//Ends if
-	        Helpers.pause(input);
-	        break;
-        default:
-	        System.out.println("Invalid choice.");
-	        Helpers.pause(input);
-        }//Ends switch-case
+    	if(bookCatalog.isEmpty()) {
+			System.out.println("There are no books in the catalog");
+		} else {
 		
+			for(Book book : bookCatalog) {
+				System.out.println(book.toString());
+				System.out.println();
+			}//Ends for loop
+		}//Ends if-else statement
+		
+        Helpers.pause(input);
 	}//Ends displayBooks
 	
 	
@@ -296,3 +415,4 @@ public class Menu {
 		System.out.println("No book found with the given ISBN");
 	}//Ends wipeBook
 }//Ends Menu class
+
